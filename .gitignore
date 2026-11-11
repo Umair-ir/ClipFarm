@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/
+models/
+.pytest_cache/
+.DS_Store
+# YouTube OAuth secrets (later phase)
+client_secret*.json
+token*.json
+# licensed music stays local (keep the README)
+music/*
+!music/README.md
+# GTA 6 inputs/outputs (footage, research, renders)
+input/
+output/
+assets/sfx/
+
+# secrets & large downloads
+YTapi.txt
+GTA6/
+*.zip

@@ -1,0 +1,84 @@
+# GTA 6 Shorts generator — templates and settings.
+#
+# Inputs (see input/gta6/README.md):
+#   input/gta6/*.mp4               footage (your gameplay/commentary, official trailers you may use, ...)
+#   input/gta6/images/*            screenshots, official artwork
+#   input/gta6/research/*.yaml     facts with status + source, for Style C
+#   input/gta6/sources.yaml        REQUIRED: origin/permission for every file above
+# Output: output/gta6/<date>_<style>_<slug>/  video.mp4, thumbnail.png, metadata.json, project.json
+
+paths:
+  input: input/gta6
+  output: output/gta6
+
+require_sources: true          # skip any file not listed in sources.yaml
+beat_engine: librosa           # librosa | numpy
+
+output:
+  width: 1080
+  height: 1920
+  fps: 30                      # 30 or 60
+  crf: 19
+  preset: medium
+
+duration:
+  min_s: 30
+  max_s: 60
+
+scenes:
+  detector_threshold: 27       # PySceneDetect ContentDetector; lower = more cuts detected
+  window_s: 3.0                # long scenes are split into windows this long for scoring
+  min_brightness: 35           # skip near-black shots (loading screens, fades)
+
+tts:
+  engine: say                  # say (macOS built in) | piper (pip install piper-tts, set piper_model)
+  voice: Daniel                # `say -v '?'` lists voices
+  rate: 200                    # words per minute (fast-paced narration)
+  piper_model: null            # path to a .onnx voice for piper
+
+sfx:                           # generated locally on first use (assets/sfx/*.wav); replace with your own if you like
+  whoosh_gain: 0.5
+  hit_gain: 0.6
+  riser_gain: 0.45
+
+captions: bold-yellow          # caption style name from config/edit.yaml → caption_styles
+
+overlay_font: /System/Library/Fonts/Supplemental/Impact.ttf
+badge_colors:
+  confirmed: "#1DB954"
+  rumor: "#FF9F1C"
+  speculation: "#FF5E5B"
+
+styles:
+  breakdown:                   # Style A: viral breakdown of your commentary footage
+    hook_s: 1.8                # hook text shown over the first seconds
+    max_gap_s: 0.35            # pauses longer than this are cut (jump cuts)
+    broll_share: 0.25          # fraction of the time covered by screenshots / other footage
+    zoom_alternate: 0.12       # jump-cut punch-in alternates between 1.0 and 1 + this
+    emphasis_zoom: 0.22        # extra zoom on emphasized words
+    music_moods: [hype, phonk, energetic]
+    music_volume: 0.18         # under narration (also sidechain-ducked)
+    color_grade: punchy        # from config/edit.yaml → color_grades
+    question_s: 3.0            # comment-bait question shown at the end
+
+  cinematic:                   # Style B: beat-synced fan edit from footage + images
+    target_s: 36
+    intro_s: 2.5               # title card over slow-motion
+    outro_s: 3.0               # slow-motion ending + title slam + fade to black
+    build_cut_beats: 2         # cut every N beats before the drop
+    drop_cut_beats: 1          # and after it
+    slowmo: 0.5
+    punch_in: 0.18
+    image_share: 0.45          # share of build-up shots that are screenshots (each edit gets a theme's images)
+    music_moods: [epic, cinematic, phonk, hype]
+    music_volume: 0.95
+    color_grade: teal-orange
+    vignette: true
+
+  facts:                       # Style C: narrated facts & theories from your research files
+    max_facts: 5
+    line_gap_s: 0.25
+    music_moods: [cinematic, dramatic, epic, ambient]
+    music_volume: 0.14
+    color_grade: cold
+    question_s: 3.0

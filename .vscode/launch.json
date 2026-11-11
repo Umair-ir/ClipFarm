@@ -1,0 +1,76 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "E2E test (sample video)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tests/test_e2e.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Clip a video file…",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "clipfarm",
+      "args": ["run", "${input:videoPath}", "--streamer", "${input:streamer}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Fan edit a clip…",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "clipfarm",
+      "args": ["edit", "${input:clipJson}", "--preset", "${input:preset}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "GTA 6: make Shorts",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "clipfarm",
+      "args": ["gta6", "make", "--styles", "${input:gta6Styles}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "GTA 6: review outputs",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "clipfarm",
+      "args": ["gta6", "review"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Process pending queue",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "clipfarm",
+      "args": ["process"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Doctor",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "clipfarm",
+      "args": ["doctor"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ],
+  "inputs": [
+    { "id": "videoPath", "type": "promptString", "description": "Path to an authorized VOD file" },
+    { "id": "streamer", "type": "promptString", "description": "Streamer name", "default": "test_streamer" },
+    { "id": "clipJson", "type": "promptString", "description": "Clip .json or .mp4 under data/clips/" },
+    { "id": "preset", "type": "pickString", "description": "Edit preset",
+      "options": ["auto", "gaming-cinematic", "funny", "dramatic", "hype", "podcast"], "default": "auto" },
+    { "id": "gta6Styles", "type": "pickString", "description": "Styles (A=breakdown, B=cinematic, C=facts)",
+      "options": ["ABC", "A", "B", "C", "AB", "AC", "BC"], "default": "ABC" }
+  ]
+}

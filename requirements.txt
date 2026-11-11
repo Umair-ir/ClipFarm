@@ -1,0 +1,25 @@
+# Speech-to-text: OpenAI Whisper models via CTranslate2 (no PyTorch needed)
+faster-whisper==1.2.1
+ctranslate2==4.8.4
+numpy==2.5.4
+
+# Video analysis (face detection for speaker-focused cropping)
+opencv-python-headless==5.0.0.93
+
+# GTA 6 mode: scene detection + beat analysis
+scenedetect==0.7.2
+librosa==1.0.0
+
+# Caption rendering
+pillow==13.0.0
+
+# Ollama HTTP API, config
+requests==2.34.2
+PyYAML==6.0.3
+python-dotenv==1.2.4
+
+# URL downloads (YouTube, Twitch, …) — needs the deno JS runtime for YouTube: brew install deno
+yt-dlp==2026.10.26
+
+# Dev
+pytest==9.2.0

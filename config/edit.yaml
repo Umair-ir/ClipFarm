@@ -1,0 +1,146 @@
+# ClipFarm fan-edit configuration.
+#
+# An edit = [intro] + main clip (captions, face tracking, original audio) + [outro montage],
+# with a licensed music track underneath. Intro and outro cuts land on the music's beats;
+# the outro starts on the track's drop.
+#
+# `defaults` apply to every preset; each preset overrides only what it lists.
+
+output:
+  width: 1080
+  height: 1920
+  fps: 30
+  crf: 19
+  preset: medium              # x264 speed/quality tradeoff
+  max_total_s: 75             # outro is shortened first if the edit runs longer
+
+music:
+  library: music              # folder of licensed tracks; each needs a <track>.yaml sidecar (see README)
+  require_license: true       # refuse tracks with no license sidecar — keep this on
+
+defaults:
+  intro_s: 0                  # beat-cut teaser built from the main clip; 0 = no intro
+  outro_s: 6                  # montage of other moments from the same VOD; 0 = no outro
+  music_volume: 0.85          # music level during intro/outro (0–1)
+  music_under_speech: 0.12    # music level while the streamer is talking
+  speech_volume: 1.0
+  caption_style: bold-yellow  # see caption_styles below
+  cut_every_beats: 2          # cut frequency: 1 = every beat (frantic), 4 = every bar (calm)
+  transition_intensity: 0.5   # 0–1: white-flash length/strength on cuts
+  slowmo_intensity: 0.5       # 0–1: 0 = never; higher = slower and more often
+  speed_ramps: true           # fast→slow ramp on some montage shots
+  punch_in: 0.12              # max extra zoom on montage shots (0.12 = 12%)
+  motion_blur: true           # frame blending on montage shots
+  main_zoom: 0.06             # slow push-in on the main clip
+  color_grade: none           # see color_grades below
+  grade_strength: 1.0         # 0–1 blend of the grade
+  vignette: false
+  music_moods: []             # used for automatic track selection
+  bpm_range: [70, 180]
+  fallback_bpm: 120           # beat grid used when no music is available
+
+presets:
+  gaming-cinematic:
+    intro_s: 1.5
+    outro_s: 7
+    cut_every_beats: 2
+    transition_intensity: 0.6
+    slowmo_intensity: 0.6
+    color_grade: teal-orange
+    vignette: true
+    music_moods: [epic, hype, cinematic]
+    bpm_range: [90, 160]
+
+  funny:
+    intro_s: 0
+    outro_s: 4
+    music_under_speech: 0.08
+    cut_every_beats: 2
+    transition_intensity: 0.3
+    slowmo_intensity: 0.2
+    speed_ramps: false
+    caption_style: bold-yellow
+    color_grade: vivid
+    music_moods: [funny, upbeat, quirky]
+
+  dramatic:
+    intro_s: 1.0
+    outro_s: 6
+    cut_every_beats: 4
+    transition_intensity: 0.4
+    slowmo_intensity: 0.8
+    caption_style: clean-white
+    color_grade: cold
+    grade_strength: 0.8
+    vignette: true
+    music_moods: [dramatic, dark, cinematic, sad]
+    bpm_range: [60, 120]
+
+  hype:
+    intro_s: 2.0
+    outro_s: 8
+    music_volume: 0.95
+    cut_every_beats: 1
+    transition_intensity: 0.9
+    slowmo_intensity: 0.5
+    punch_in: 0.2
+    caption_style: impact-red
+    color_grade: punchy
+    music_moods: [hype, energetic, edm, phonk]
+    bpm_range: [110, 180]
+
+  podcast:
+    intro_s: 0
+    outro_s: 0
+    music_under_speech: 0.07
+    main_zoom: 0.04
+    speed_ramps: false
+    slowmo_intensity: 0
+    motion_blur: false
+    caption_style: clean-white
+    color_grade: warm
+    grade_strength: 0.6
+    music_moods: [chill, motivational, ambient, lofi]
+    bpm_range: [60, 110]
+
+# Which preset `--preset auto` picks for each highlight category.
+auto_preset:
+  funny: funny
+  argument: dramatic
+  controversial: dramatic
+  reaction: hype
+  conversation: podcast
+  other: gaming-cinematic
+
+caption_styles:
+  bold-yellow:
+    subtitle_font: /System/Library/Fonts/Supplemental/Arial Black.ttf
+    subtitle_size: 82
+    words_per_caption: 3
+    caption_color: "#FFFFFF"
+    caption_highlight: "#FFDD00"
+    caption_uppercase: true
+  impact-red:
+    subtitle_font: /System/Library/Fonts/Supplemental/Impact.ttf
+    subtitle_size: 104
+    words_per_caption: 2
+    caption_color: "#FFFFFF"
+    caption_highlight: "#FF3B30"
+    caption_uppercase: true
+  clean-white:
+    subtitle_font: /System/Library/Fonts/Supplemental/Arial Bold.ttf
+    subtitle_size: 70
+    words_per_caption: 4
+    caption_color: "#FFFFFF"
+    caption_highlight: "#9AD8FF"
+    caption_uppercase: false
+
+# FFmpeg filter chains. Add your own; reference them by name in a preset.
+color_grades:
+  none: ""
+  teal-orange: "colorbalance=rs=-0.10:bs=0.12:rh=0.10:bh=-0.08,eq=saturation=1.12:contrast=1.06"
+  cold: "colorbalance=bs=0.10:bm=0.06:rm=-0.05,eq=saturation=0.85:contrast=1.08"
+  warm: "colorbalance=rm=0.08:bm=-0.05:rh=0.05,eq=saturation=1.05"
+  vivid: "eq=saturation=1.25:contrast=1.05"
+  punchy: "eq=saturation=1.3:contrast=1.12:gamma=0.97"
+  bw: "hue=s=0,eq=contrast=1.1"

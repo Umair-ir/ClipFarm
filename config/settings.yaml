@@ -1,0 +1,54 @@
+# ClipFarm configuration. Values can be overridden with environment variables
+# in .env (see .env.example) — e.g. CLIPFARM_WHISPER_MODEL=medium.
+
+paths:
+  data_dir: data            # everything below is relative to the project root
+  inbox: data/inbox         # drop raw VODs here for `clipfarm ingest-inbox`
+  library: data/library     # organized as library/<streamer>/<YYYY-MM-DD>/
+  cache: data/cache         # transcripts + highlight results, keyed by file hash
+  clips: data/clips         # rendered Shorts + metadata JSON
+  edits: data/edits         # fan edits (clipfarm edit)
+  logs: data/logs
+  db: data/clipfarm.db      # SQLite processing queue
+
+whisper:
+  model: small              # tiny | base | small | medium | large-v3 (8 GB RAM: small is the sweet spot)
+  device: cpu               # cpu on Apple Silicon (CTranslate2 has no Metal backend)
+  compute_type: int8
+  language: null            # null = auto-detect; "en" skips detection and is faster
+  vad_filter: true          # skip silence
+
+ollama:
+  host: http://127.0.0.1:11434
+  model: qwen2.5:3b         # small enough for 8 GB RAM; good at JSON output
+  temperature: 0.2
+  num_ctx: 8192
+  num_predict: 2000         # cap on output tokens per call
+  timeout_s: 180
+
+highlights:
+  window_s: 300             # transcript chunk size sent to the LLM
+  overlap_s: 45             # overlap so moments on a chunk boundary aren't lost
+  min_clip_s: 20
+  max_clip_s: 60
+  max_clips_per_vod: 5
+  clips_per_window: 3       # asked per LLM call; fewer = shorter answers, fewer truncated JSON failures
+  min_score: 5              # 1–10 engagement score threshold
+
+render:
+  width: 1080
+  height: 1920
+  crf: 20
+  preset: medium
+  audio_bitrate: 192k
+  face_tracking: true       # center the 9:16 crop on detected faces
+  zoom: 0.08                # slow push-in over the clip (0.08 = 8%); 0 disables
+  subtitles: true
+  subtitle_font: /System/Library/Fonts/Supplemental/Arial Black.ttf
+  subtitle_size: 82
+  words_per_caption: 3
+  caption_color: "#FFFFFF"
+  caption_highlight: "#FFDD00"  # color of the word currently being spoken
+  caption_stroke: "#000000"
+  caption_y: 0.66               # top of caption band as a fraction of frame height
+  caption_uppercase: true
